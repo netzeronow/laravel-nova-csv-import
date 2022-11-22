@@ -5,6 +5,7 @@ namespace SimonHamp\LaravelNovaCsvImport;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Laravel\Nova\Resource;
+use Laravel\Nova\Http\Requests\NovaRequest;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\SkipsErrors;
@@ -71,6 +72,16 @@ class Importer implements ToModel, WithValidation, WithHeadingRow, WithMapping, 
         $model->fill($row);
 
         return $model;
+    }
+
+    public function preProcess(NovaRequest $request)
+    {
+        //Do something before the import starts
+    }
+
+    public function postProcess(NovaRequest $request)
+    {
+        //Do something after the import ends
     }
 
     public function rules(): array

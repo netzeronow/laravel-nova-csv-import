@@ -43,7 +43,7 @@ class ImportController
 
         $rows = $import->take(10)->all();
 
-        $resources = $this->getAvailableResourcesForImport($request); 
+        $resources = $this->getAvailableResourcesForImport($request);
 
         $fields = $resources->mapWithKeys(function ($resource) use ($request) {
             return $this->getAvailableFieldsForImport($resource, $request);
@@ -64,7 +64,7 @@ class ImportController
     }
 
     /**
-     * 
+     *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
@@ -156,8 +156,11 @@ class ImportController
             ->setModelClass($model_class)
             ->setMeta($config['meta'])
             ->setCustomValues($config['values'])
-            ->setModifiers($config['modifiers'])
-            ->import($path, $this->getDisk());
+            ->setModifiers($config['modifiers']);
+
+        $this->importer->preProcess($request);
+        $this->importer->import($path, $this->getDisk());
+        $this->importer->postProcess($request);
 
         $failures = $this->importer->failures();
         $errors = $this->importer->errors();
@@ -213,8 +216,8 @@ class ImportController
                 'rules' => $this->extractValidationRules($novaResource, $request)->get($field->attribute),
             ];
         });
-        
-        // Note: ->values() is used here to avoid this array being turned into an object due to 
+
+        // Note: ->values() is used here to avoid this array being turned into an object due to
         // non-sequential keys (which might happen due to the filtering above.
         return [
             $novaResource->uriKey() => $fields->values(),
@@ -233,9 +236,9 @@ class ImportController
             if (!isset($resource::$model)) {
                 return false;
             }
-            
+
             $resourceReflection = (new \ReflectionClass((string) $resource));
-            
+
             if ($resourceReflection->hasMethod('canImportResource')) {
                 return $resource::canImportResource($request);
             }
