@@ -160,7 +160,6 @@ class ImportController
 
         $this->importer->preProcess($request);
         $this->importer->import($path, $this->getDisk());
-        $this->importer->postProcess($request);
 
         $failures = $this->importer->failures();
         $errors = $this->importer->errors();
@@ -175,6 +174,8 @@ class ImportController
             'failures' => $failures,
             'errors' => $errors,
         ], JSON_PRETTY_PRINT));
+
+        $this->importer->postProcess($request, $total_rows, $failures, $errors);
 
         return response()->json(['review' => "/csv-import/review/{$file}"]);
     }

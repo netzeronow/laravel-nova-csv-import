@@ -79,7 +79,7 @@ class Importer implements ToModel, WithValidation, WithHeadingRow, WithMapping, 
         //Do something before the import starts
     }
 
-    public function postProcess(NovaRequest $request)
+    public function postProcess(NovaRequest $request, $totalRows, $failures, $errors)
     {
         //Do something after the import ends
     }
